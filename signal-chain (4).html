@@ -1,0 +1,1099 @@
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5W8BDKV8');</script>
+<!-- End Google Tag Manager -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<!-- GA4 — єдина ініціалізація -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-818VRNJMYV"></script>
+<script>
+  if(!window._gaInit){
+    window._gaInit=true;
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag=gtag;
+    gtag('js',new Date());
+    gtag('config','G-818VRNJMYV');
+  }
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Chain | Secure Drop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060404;--surface:#0d0a0a;--border:#241515;--accent:#ff003c;
+  --glow:rgba(255,0,60,.4);--dim:#554444;--mid:#997777;--text:#f0e8e8;
+  --green:#00ff88;--yellow:#ffd700;--blue:#00aaff;
+  --mono:'Share Tech Mono',monospace;--display:'Barlow Condensed',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow-x:hidden;padding:20px;position:relative;}
+body::before{content:'';position:fixed;inset:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);
+  pointer-events:none;z-index:999;animation:scanroll 8s linear infinite;}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,0,60,.1) 0%,transparent 70%);
+  pointer-events:none;z-index:0;}
+@keyframes scanroll{0%{background-position:0 0}100%{background-position:0 100px}}
+
+.particle{position:fixed;width:1px;height:1px;background:var(--accent);border-radius:50%;opacity:0;
+  animation:float-up var(--dur,6s) var(--delay,0s) infinite ease-in;}
+@keyframes float-up{
+  0%{opacity:0;transform:translateY(100vh) translateX(0)}
+  10%{opacity:.5}90%{opacity:.1}
+  100%{opacity:0;transform:translateY(-10vh) translateX(var(--dx,0px))}}
+
+.wrap{width:100%;max-width:480px;position:relative;z-index:1}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{display:flex;align-items:center;gap:8px;margin-bottom:22px;padding:0 4px;}
+.progress-step{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:2px;
+  color:var(--dim);text-transform:uppercase;transition:color .3s;}
+.progress-step.active{color:var(--accent);}
+.progress-step.done{color:var(--green);}
+.progress-dot{width:8px;height:8px;border-radius:50%;border:1px solid currentColor;
+  transition:all .3s;flex-shrink:0;}
+.progress-step.active .progress-dot{background:var(--accent);border-color:var(--accent);
+  box-shadow:0 0 8px var(--accent);}
+.progress-step.done .progress-dot{background:var(--green);border-color:var(--green);}
+.progress-line{flex:1;height:1px;background:var(--border);position:relative;overflow:hidden;}
+.progress-line::after{content:'';position:absolute;top:0;left:0;height:100%;width:0%;
+  background:var(--green);transition:width .5s ease;will-change:width;}
+.progress-line.done::after{width:100%;}
+
+/* ── RANK BADGE ── */
+.rank-bar{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:18px;padding:8px 12px;background:rgba(255,255,255,.02);
+  border:1px solid var(--border);border-radius:6px;}
+.rank-info{display:flex;align-items:center;gap:8px;font-size:9px;color:var(--dim);letter-spacing:2px;}
+.rank-icon{font-size:16px;}
+.rank-label{color:var(--mid);}
+.rank-count{font-size:9px;color:var(--dim);letter-spacing:1px;}
+
+/* ── HEADER ── */
+.site-header{text-align:center;margin-bottom:24px;}
+.signal-badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;
+  letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:14px;}
+.signal-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;
+  box-shadow:0 0 8px var(--accent);animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+
+.glitch-title{font-family:var(--display);font-size:clamp(38px,10vw,60px);font-weight:800;
+  letter-spacing:4px;text-transform:uppercase;line-height:1;color:var(--text);
+  position:relative;display:inline-block;}
+.glitch-title::before,.glitch-title::after{content:attr(data-text);position:absolute;
+  top:0;left:0;width:100%;height:100%;}
+.glitch-title::before{color:var(--accent);animation:ga 3.5s infinite;
+  clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%);}
+.glitch-title::after{color:var(--green);animation:gb 3.5s infinite;
+  clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);}
+@keyframes ga{0%,94%,100%{transform:translate(0);opacity:0}95%{transform:translate(-3px,1px);opacity:.8}97%{transform:translate(3px,-1px);opacity:.8}}
+@keyframes gb{0%,96%,100%{transform:translate(0);opacity:0}97%{transform:translate(3px,2px);opacity:.6}99%{transform:translate(-2px,-1px);opacity:.6}}
+.subtitle{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:8px;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:26px 22px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;}
+
+.step{display:none;}
+.step.active{display:block;}
+
+.field-label{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;
+  margin-bottom:8px;display:block;}
+.field-gap{margin-bottom:14px;}
+
+input[type="text"]{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:6px;color:var(--text);font-family:var(--mono);font-size:15px;
+  padding:13px 16px;outline:none;letter-spacing:1px;transition:border-color .3s,box-shadow .3s;}
+input[type="text"]::placeholder{color:var(--dim);}
+input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,0,60,.1);}
+input[type="text"].error{border-color:var(--accent);animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0;font-size:10px;
+  color:var(--dim);letter-spacing:2px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.btn-primary{width:100%;background:transparent;border:1px solid var(--accent);color:var(--text);
+  font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  padding:14px;border-radius:6px;cursor:pointer;position:relative;overflow:hidden;
+  transition:all .3s;box-shadow:0 0 18px var(--glow);margin-top:4px;}
+.btn-primary::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;
+  background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);
+  transition:width .5s,height .5s;opacity:.12;}
+.btn-primary:hover::before{width:400px;height:400px;}
+.btn-primary:hover{color:#fff;box-shadow:0 0 35px var(--glow);}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.6;pointer-events:none;}
+
+.btn-reset{width:100%;background:transparent;border:1px solid var(--border);color:var(--dim);
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  padding:10px;border-radius:6px;cursor:pointer;transition:all .25s;}
+.btn-reset:hover{border-color:var(--mid);color:var(--mid);}
+
+/* ── MODE SELECTOR ── */
+.mode-selector{display:flex;gap:6px;margin-bottom:16px;}
+.mode-btn{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);
+  color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+  padding:10px 6px;border-radius:6px;cursor:pointer;transition:all .25s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;}
+.mode-btn .mode-icon{font-size:18px;}
+.mode-btn:hover{background:rgba(255,255,255,.07);color:var(--mid);}
+.mode-btn.selected-mystika{border-color:var(--accent);color:var(--accent);
+  background:rgba(255,0,60,.08);box-shadow:0 0 12px rgba(255,0,60,.2);}
+.mode-btn.selected-drama{border-color:var(--yellow);color:var(--yellow);
+  background:rgba(255,215,0,.06);box-shadow:0 0 12px rgba(255,215,0,.2);}
+.mode-btn.selected-funny{border-color:var(--green);color:var(--green);
+  background:rgba(0,255,136,.06);box-shadow:0 0 12px rgba(0,255,136,.2);}
+.mode-locked{opacity:.4;cursor:not-allowed;pointer-events:none;}
+
+/* ── LOADING ── */
+.loading-text{text-align:center;color:var(--dim);font-size:11px;letter-spacing:3px;
+  padding:18px 0;display:none;}
+.loading-text.show{display:block;}
+.loading-dots::after{content:'...';animation:dots 1.2s steps(4,end) infinite;}
+@keyframes dots{0%,20%{content:'.'}40%{content:'..'}60%,100%{content:'...'}}
+
+/* ── DECRYPT SCREEN ── */
+.decrypt-screen{display:none;padding:22px 0;text-align:center;}
+.decrypt-screen.show{display:block;}
+.decrypt-label{font-size:9px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:16px;}
+.decrypt-chars{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:8px;
+  color:var(--accent);text-shadow:0 0 20px var(--glow);min-height:40px;
+  animation:flicker .15s infinite;}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:.7}}
+.decrypt-bar{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:16px;overflow:hidden;}
+.decrypt-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--green));
+  border-radius:2px;transition:width .1s linear;}
+
+/* ── MESSAGE BOX ── */
+.msg-box{display:none;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.msg-content{padding:22px;background:rgba(0,0,0,.4);min-height:100px;}
+.msg-text{font-family:var(--mono);font-size:15px;line-height:1.8;color:#fff;
+  white-space:pre-line;font-weight:600;text-shadow:0 0 4px rgba(255,255,255,.2);}
+
+/* ── VIRAL CTA ── */
+.viral-cta{margin-top:20px;padding:16px;background:rgba(255,0,60,.06);
+  border:1px solid rgba(255,0,60,.25);border-radius:8px;text-align:center;}
+.viral-cta-title{font-family:var(--display);font-size:18px;font-weight:800;
+  letter-spacing:2px;color:var(--accent);margin-bottom:6px;}
+.viral-cta-sub{font-size:10px;color:var(--dim);letter-spacing:1px;margin-bottom:14px;}
+.viral-trigger{font-size:10px;color:var(--mid);letter-spacing:1px;margin-top:10px;font-style:italic;}
+
+/* ── SHARE ── */
+.share-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;}
+.share-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--mid);
+  font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:12px 6px;
+  border-radius:6px;cursor:pointer;transition:all .25s;display:flex;
+  flex-direction:column;align-items:center;gap:4px;}
+.share-btn .icon{font-size:18px;}
+.share-btn:hover{background:rgba(255,255,255,.09);color:#fff;transform:translateY(-2px);}
+.share-btn.tg:hover{border-color:#0088cc;color:#0088cc;box-shadow:0 0 12px rgba(0,136,204,.2);}
+.share-btn.wa:hover{border-color:#25D366;color:#25D366;box-shadow:0 0 12px rgba(37,211,102,.2);}
+.share-btn.ig:hover{border-color:#E1306C;color:#E1306C;box-shadow:0 0 12px rgba(225,48,108,.2);}
+.share-btn.cp:hover{border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 12px rgba(255,215,0,.2);}
+
+/* ── CODE BLOCK ── */
+.your-code-block{margin-top:14px;background:rgba(0,255,136,.04);
+  border:1px solid rgba(0,255,136,.2);border-radius:8px;padding:16px 18px;}
+.your-code-label{font-size:10px;letter-spacing:2px;color:rgba(0,255,136,.6);
+  text-transform:uppercase;margin-bottom:10px;}
+.code-display{display:flex;align-items:center;gap:10px;}
+.code-value{flex:1;font-family:var(--display);font-size:28px;font-weight:800;
+  letter-spacing:6px;color:var(--green);text-shadow:0 0 20px rgba(0,255,136,.4);}
+.btn-copy-code{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);
+  color:var(--green);font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;padding:10px 14px;border-radius:6px;cursor:pointer;
+  transition:all .25s;white-space:nowrap;flex-shrink:0;}
+.btn-copy-code:hover{background:rgba(0,255,136,.2);box-shadow:0 0 12px rgba(0,255,136,.2);}
+.btn-copy-code.copied{background:rgba(0,255,136,.25);color:#fff;}
+.code-hint{font-size:10px;color:var(--dim);margin-top:8px;letter-spacing:1px;}
+
+/* ── PREVIEW BOX ── */
+.preview-box{background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;margin-bottom:14px;}
+.preview-label{font-size:9px;letter-spacing:2px;color:var(--dim);
+  text-transform:uppercase;margin-bottom:8px;}
+.preview-text{font-size:12px;color:var(--mid);line-height:1.6;letter-spacing:.5px;}
+
+/* ── SOCIAL PROOF ── */
+.social-proof{margin-top:24px;display:flex;flex-direction:column;gap:5px;align-items:center;}
+.proof-line{font-size:10px;color:#444455;letter-spacing:1px;
+  display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;
+  box-shadow:0 0 6px var(--accent);animation:pulse 1.8s ease-in-out infinite;flex-shrink:0;}
+.proof-num{color:#888899;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1a1a22;border:1px solid #333;color:#ccc;font-family:var(--mono);
+  font-size:11px;padding:11px 18px;border-radius:6px;z-index:9999;letter-spacing:1px;
+  white-space:nowrap;max-width:90vw;box-shadow:0 4px 24px rgba(0,0,0,.5);
+  transition:opacity .4s;opacity:0;pointer-events:none;}
+#toast.error-toast{border-color:var(--accent);color:#ff8888;}
+#toast.success-toast{border-color:var(--green);color:#88ffcc;}
+
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fade-in .5s ease forwards;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── UNLOCK NOTIFICATION ── */
+.unlock-notif{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:#0d120d;border:1px solid var(--green);color:var(--green);
+  font-family:var(--mono);font-size:11px;padding:12px 20px;border-radius:8px;
+  z-index:10000;letter-spacing:1px;white-space:nowrap;
+  box-shadow:0 0 24px rgba(0,255,136,.3);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.unlock-notif.show{transform:translateX(-50%) translateY(0);}
+
+/* ── ACHIEVEMENT NOTIFICATION ── */
+.achieve-notif{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-120px);
+  background:#120d06;border:1px solid var(--yellow);color:var(--yellow);
+  font-family:var(--mono);font-size:11px;padding:10px 18px;border-radius:8px;
+  z-index:9999;letter-spacing:1px;white-space:nowrap;max-width:90vw;text-align:center;
+  box-shadow:0 0 24px rgba(255,215,0,.25);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.achieve-notif.show{transform:translateX(-50%) translateY(0);}
+.achieve-notif .achieve-sub{font-size:9px;color:rgba(255,215,0,.5);letter-spacing:2px;
+  display:block;margin-top:3px;}
+
+/* ── TROLL MESSAGE ── */
+.troll-notif{position:fixed;bottom:80px;right:16px;transform:translateX(200px);
+  background:#080808;border:1px solid #222;color:#445;
+  font-family:var(--mono);font-size:10px;padding:10px 14px;border-radius:6px;
+  z-index:9998;letter-spacing:1px;max-width:220px;line-height:1.5;
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1);}
+.troll-notif.show{transform:translateX(0);}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .wrap{padding:0;}
+  .card{border-radius:10px;padding:20px 16px;}
+  .code-value{font-size:22px;letter-spacing:4px;}
+  .glitch-title{font-size:clamp(34px,12vw,52px);}
+  .share-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5W8BDKV8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div id="particles"></div>
+<div id="toast"></div>
+<div class="unlock-notif" id="unlockNotif"></div>
+<div class="achieve-notif" id="achieveNotif"><span id="achieveText">🏆</span><span class="achieve-sub" id="achieveSub">ДОСЯГНЕННЯ РОЗБЛОКОВАНО</span></div>
+<div class="troll-notif" id="trollNotif"></div>
+
+<div class="wrap">
+
+  <!-- RANK BAR -->
+  <div class="rank-bar" id="rankBar">
+    <div class="rank-info">
+      <span class="rank-icon" id="rankIcon">🔰</span>
+      <span>РАНГ: <span class="rank-label" id="rankLabel">НОВАЧОК</span></span>
+    </div>
+    <div class="rank-count">СИГНАЛІВ: <span id="rankCount">0</span></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-step" id="prog-1">
+      <div class="progress-dot"></div>
+      <span>HOME</span>
+    </div>
+    <div class="progress-line" id="prog-line-1"></div>
+    <div class="progress-step" id="prog-2">
+      <div class="progress-dot"></div>
+      <span>ACTION</span>
+    </div>
+    <div class="progress-line" id="prog-line-2"></div>
+    <div class="progress-step" id="prog-3">
+      <div class="progress-dot"></div>
+      <span>DONE</span>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="signal-badge"><span class="signal-dot"></span>SECURE TRANSMISSION</div>
+    <div class="glitch-title" data-text="SIGNAL">SIGNAL</div>
+    <div class="glitch-title" data-text="CHAIN" style="color:var(--accent);display:block">CHAIN</div>
+    <div class="subtitle">Анонімно · Провокативно · Незворотно</div>
+  </div>
+
+  <!-- ══ STEP 1: HOME ══ -->
+  <div class="step active" id="step-home">
+    <div class="card fade-in">
+      <div class="field-gap">
+        <label class="field-label" for="codeInput">🔐 МАЄШ СЕКРЕТНИЙ КОД?</label>
+        <input type="text" id="codeInput"
+          placeholder="Введи 8-значний код..."
+          autocomplete="off" spellcheck="false"
+          maxlength="10"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+      </div>
+      <button class="btn-primary" id="btn-read" onclick="readSignal()">▶ РОЗШИФРУВАТИ СИГНАЛ</button>
+      <div class="divider">АБО</div>
+      <button class="btn-reset" onclick="goCreate()"
+        style="width:100%;padding:14px;color:var(--text);border-color:var(--dim);">
+        ✚ СТВОРИТИ СИГНАЛ ДЛЯ ІНШОГО
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: DECRYPT ANIMATION ══ -->
+  <div class="step" id="step-decrypt">
+    <div class="card fade-in" style="text-align:center;padding:36px 22px;">
+      <div style="font-size:10px;letter-spacing:3px;color:var(--dim);margin-bottom:20px;">ПЕРЕХОПЛЕНО ЗАШИФРОВАНИЙ КАНАЛ</div>
+      <div class="decrypt-chars" id="decryptChars">▓▓▓▓▓▓▓▓</div>
+      <div class="decrypt-bar" style="margin-top:20px;">
+        <div class="decrypt-fill" id="decryptFill"></div>
+      </div>
+      <div style="font-size:9px;letter-spacing:2px;color:var(--dim);margin-top:12px;" id="decryptStatus">
+        АНАЛІЗ СИГНАЛУ...
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: READ MESSAGE ══ -->
+  <div class="step" id="step-read">
+    <div class="card fade-in">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--accent);
+        text-shadow:0 0 5px var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <span class="signal-dot"></span>ПЕРСОНАЛЬНЕ ПОВІДОМЛЕННЯ РОЗШИФРОВАНО
+      </div>
+      <div class="msg-box" id="readMsgBox"
+        style="display:block;border-color:var(--accent);">
+        <div class="msg-content" style="background:rgba(255,0,60,.05);">
+          <div class="msg-text" id="readMsgText"></div>
+        </div>
+      </div>
+
+      <div class="viral-cta" id="readActions" style="display:none;">
+        <div class="viral-cta-title">окей.</div>
+        <div class="viral-cta-sub">тепер зроби це комусь іншому. ми всі через це проходили.</div>
+        <button class="btn-primary" onclick="goCreate()"
+          style="box-shadow:0 0 15px var(--glow);">⚡ ПЕРЕДАТИ ДАЛІ</button>
+        <div class="viral-trigger">• ну що, стало легше? ні? окей •</div>
+      </div>
+
+      <button class="btn-reset" onclick="goHome()" style="margin-top:12px;">↺ НА ГОЛОВНУ</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: CREATE ══ -->
+  <div class="step" id="step-create">
+    <div class="card fade-in">
+      <label class="field-label">ОБЕРИ ТИП ПОВІДОМЛЕННЯ:</label>
+      <div class="mode-selector">
+        <button class="mode-btn selected-mystika" id="mode-mystika" onclick="setMode('mystika')">
+          <span class="mode-icon">😈</span>
+          <span>МІСТИКА</span>
+        </button>
+        <button class="mode-btn" id="mode-drama" onclick="setMode('drama')">
+          <span class="mode-icon">😏</span>
+          <span>ДРАМА</span>
+        </button>
+        <button class="mode-btn mode-locked" id="mode-funny" onclick="setMode('funny')" title="Розблоковується на 3+ сигнали">
+          <span class="mode-icon">😂</span>
+          <span>СМІШНЕ 🔒</span>
+        </button>
+      </div>
+
+      <div class="field-gap">
+        <label class="field-label" for="targetName">👤 КОМУ ВІДПРАВЛЯЄШ?</label>
+        <input type="text" id="targetName"
+          placeholder="Введи ім'я..."
+          autocomplete="off" spellcheck="false" maxlength="30">
+      </div>
+      <button class="btn-primary" id="btn-generate" onclick="generateSignal()">▶ ЗГЕНЕРУВАТИ СИГНАЛ</button>
+      <button class="btn-reset" onclick="goHome()" style="margin-top:12px;">↺ НАЗАД</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 5: SHARE ══ -->
+  <div class="step" id="step-share">
+    <div class="card fade-in">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--green);
+        margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <span style="width:7px;height:7px;background:var(--green);border-radius:50%;
+          box-shadow:0 0 8px var(--green);display:inline-block;flex-shrink:0;"></span>
+        СИГНАЛ АКТИВОВАНО — НАДІШЛИ КОД ЖЕРТВІ
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">📄 ТЕКСТ, ЯКИЙ ВОНИ ПОБАЧАТЬ:</div>
+        <div class="preview-text" id="previewMsgText"></div>
+      </div>
+
+      <div class="your-code-block">
+        <div class="your-code-label">▸ КОД ДОСТУПУ:</div>
+        <div class="code-display">
+          <div class="code-value" id="newCodeDisplay">--------</div>
+          <button class="btn-copy-code" id="copyCodeBtn" onclick="copyCode()">КОПІЮВАТИ</button>
+        </div>
+        <div class="code-hint">Жертва вводить цей код на сайті — і тільки тоді побачить повідомлення.</div>
+      </div>
+
+      <div style="font-size:10px;letter-spacing:2px;color:var(--dim);
+        text-align:center;margin:16px 0 10px;">НАДІСЛАТИ ЧЕРЕЗ:</div>
+      <div class="share-grid">
+        <button class="share-btn tg" onclick="doShare('telegram')">
+          <span class="icon">✈️</span>Telegram
+        </button>
+        <button class="share-btn wa" onclick="doShare('whatsapp')">
+          <span class="icon">💬</span>WhatsApp
+        </button>
+        <button class="share-btn ig" onclick="doShare('instagram')">
+          <span class="icon">📸</span>Instagram
+        </button>
+        <button class="share-btn cp" onclick="copyFullMessage()" style="grid-column:span 3;
+          border-color:var(--dim);">
+          <span class="icon">📋</span>СКОПІЮВАТИ ВЕСЬ ТЕКСТ
+        </button>
+      </div>
+
+      <button class="btn-reset" id="btn-create-another" onclick="goCreate()" style="margin-top:14px;">✚ СТВОРИТИ ЩЕ ОДИН</button>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <div class="social-proof">
+    <div class="proof-line">
+      <span class="live-dot"></span>
+      Вже&nbsp;<span class="proof-num" id="counter1">48,291</span>&nbsp;людей в пастці
+    </div>
+    <div class="proof-line">
+      Тільки сьогодні розкрито&nbsp;<span class="proof-num" id="counter2">12,044</span>&nbsp;секретів
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyDB2Bdl95s5PHbGLu3g0RhAZS4NAWojjZ0",
+  authDomain:"sent-e8c5d.firebaseapp.com",
+  projectId:"sent-e8c5d",
+  storageBucket:"sent-e8c5d.firebasestorage.app",
+  messagingSenderId:"506834649757",
+  appId:"1:506834649757:web:9b97ff140ae6100d250a74"
+});
+const db = getFirestore(app);
+
+// ══════════════════════════════════════════════
+// ПУЛИ ПОВІДОМЛЕНЬ
+// ══════════════════════════════════════════════
+const pools = {
+  mystika: [
+    "{name}, твоє відображення в дзеркалі щойно моргнуло на секунду пізніше за тебе.",
+    "Не озирайся, {name}. Воно тільки й чекає, щоб ти зустрівся з ним поглядом.",
+    "{name}, твоя тінь рухалася сама по собі. Воно прив'язалося до тебе назавжди.",
+    "Твій домашній улюбленець дивиться не в порожнечу, {name}. Він бачить того, хто стоїть за тобою.",
+    "{name}, хтось збирав твої випавші волосини і фотографії. Ритуал вже розпочато.",
+    "Твої сни такі реалістичні, {name}, бо це не сни — це спогади, які тобі стерли.",
+    "{name}, те, що ти бачив краєм ока в темряві — це не гра уяви. Воно все ще там.",
+    "Людина поруч із тобою — не та, за кого себе видає, {name}. Це зовсім інша сутність.",
+    "{name}, твоє ім'я сьогодні вночі багаторазово згадували під час дуже темного ритуалу.",
+    "Ти відчуваєш раптовий холод по спині, {name}? Це погляд того, кого ти не бачиш.",
+    "{name}, хтось непомітно зрізав пасмо твого волосся і шматок одягу. Для чогось жахливого.",
+    "Той дивний звук вночі — це не вітер, {name}. Це хтось намагався безшумно відкрити вікно.",
+    "{name}, світло в коридорі блимнуло не через перепад напруги — хтось щойно тихо пройшов.",
+    "Твоя кімната здається знайомою, {name}, але поки тебе не було, хтось перемістив кожну річ.",
+    "{name}, коли ти дочитаєш це до кінця — вони нарешті постукають у твої двері.",
+    "Ти ніколи не залишаєш двері прочиненими, {name}? Бо хтось прийшов задовго до тебе.",
+    "{name}, сьогодні до тебе підійде незнайомець. За жодних обставин не дивись йому в очі.",
+    "Хтось знає точну хвилину твоєї смерті, {name}. І вони з нетерпінням чекають цього моменту."
+  ],
+  drama: [
+    "{name}, твої друзі створили окремий чат без тебе. Те, що вони там пишуть — просто жахливо.",
+    "Людина, якій ти довіряєш найбільше, {name}, готує проти тебе кось незворотне.",
+    "{name}, твоя друга половинка має прихований телефон. І там речі, які ти не хочеш бачити.",
+    "Хтось збирає всі твої помилки, {name}, і чекає слушного моменту для публічного знищення.",
+    "{name}, людина, яка завжди тебе підтримує, методично і повільно тебе отруює.",
+    "Твоя найближча людина знає про тебе те, {name}, що може зруйнувати все твоє життя.",
+    "{name}, хтось пише твоїм друзям від твого імені. І повідомлення — моторошні.",
+    "Той, хто завжди посміхається тобі, {name}, вже давно перейшов на бік ворогів.",
+    "{name}, людина, якій ти щойно написав щире повідомлення, вголос сміється з тебе прямо зараз.",
+    "Хтось розкопав твою найстарішу брехню, {name}. Готуйся до публічного знищення.",
+    "{name}, твоя 'найкраща подруга/друг' ділиться твоїми секретами з тими, кого ти ненавидиш.",
+    "Той 'щасливий' випадок у твоєму житті, {name}, був ретельно спланованою пасткою.",
+    "{name}, людина, яку ти кохаєш, відчуває до тебе лише огиду і чекає слушного моменту.",
+    "Твої паролі більше не твої, {name}. За тобою спостерігають зсередини твоїх акаунтів.",
+    "{name}, хтось методично перетворює твоїх друзів на ворогів. Ти скоро залишишся сам.",
+    "Ти ділишся найглибшими секретами з людиною, {name}, яка насправді працює на твого ворога.",
+    "{name}, людина, яку ти вважаєш давно мертвою, жива і активно шукає тебе прямо зараз.",
+    "Хтось уважно вивчає твій розпорядок дня, {name}. Ти став занадто передбачуваним."
+  ],
+  funny: [
+    "{name}, ти знаєш, що смієшся дивно? Усі помічають, просто з ввічливості мовчать.",
+    "Серйозно, {name}, хто тебе навчив так паркуватись? Пів міста обговорює.",
+    "{name}, той мем, що ти надіслав у загальний чат — всі промовчали, але всі бачили.",
+    "Мені треба визнатись, {name}: ми всі знаємо, що ти їдиш з холодильника вночі. Всі.",
+    "{name}, справа не в техніці. Ти просто не вмієш танцювати. Ніхто не казав, щоб не образити.",
+    "Той момент на вечірці, {name}, коли ти думав, що ніхто не бачив — бачили абсолютно всі.",
+    "{name}, твоя улюблена пісня в плейлисті — це не секрет. Усі давно знають і дивуються.",
+    "Хочу відверто: твій 'фірмовий' рецепт, {name} — Google знає цей рецепт вже 15 років.",
+    "{name}, люди в черзі за тобою тихо обговорювали твою зачіску. Позитивно, але обговорювали.",
+    "Визнай, {name} — ти досі не знаєш, як правильно їсти артишок. Нас таких більшість.",
+    "{name}, твій 'унікальний' підпис у email використовують 4 мільйони людей дослівно.",
+    "Та сторінка в браузері, яку ти 'випадково' відкрив на роботі, {name} — ІТ-відділ бачив.",
+    "{name}, ти робиш 'умне обличчя' під час відеодзвінків, але воно виходить трохи кумедне.",
+    "Щиро кажучи, {name}, той 'складний' пароль, який ти придумав — це просто рік і знак питання.",
+    "{name}, твій 'секретний' танець під душем вже відомий всьому поверху. Стіни тонкі."
+  ]
+};
+
+// ══════════════════════════════════════════════
+// GAME / RANK SYSTEM
+// ══════════════════════════════════════════════
+const RANKS = [
+  { min:0,  label:'НОВАЧОК СИГНАЛІВ',              icon:'🐣', unlocks:[] },
+  { min:3,  label:'ПІДОЗРІЛИЙ СПОСТЕРІГАЧ',         icon:'🧃', unlocks:['funny'] },
+  { min:6,  label:'ТОЙ, ХТО "ПРОСТО ДИВИТЬСЯ"',    icon:'🕵️', unlocks:[] },
+  { min:11, label:'ПЕРЕДАВАЧ ХАОСУ',                icon:'📡', unlocks:[] },
+  { min:21, label:'ЗНАЄ ТРОХИ БІЛЬШЕ',              icon:'🧠', unlocks:[] },
+  { min:35, label:'ВЖЕ НЕ ВІДКАТИШСЯ',             icon:'🗿', unlocks:[] },
+  { min:55, label:'В СИСТЕМІ ДАВНО',                icon:'👁️', unlocks:[] },
+  { min:80, label:'ПОЧАЛОСЯ…',                      icon:'🧨', unlocks:[] }
+];
+
+function getStats(){ return JSON.parse(localStorage.getItem('sc_stats')||'{"created":0,"opened":0}'); }
+function saveStats(s){ localStorage.setItem('sc_stats', JSON.stringify(s)); }
+
+function getCurrentRank(created){
+  let rank = RANKS[0];
+  for(const r of RANKS){ if(created>=r.min) rank=r; }
+  return rank;
+}
+
+function updateRankUI(){
+  const s = getStats();
+  const rank = getCurrentRank(s.created);
+  document.getElementById('rankIcon').textContent = rank.icon;
+  document.getElementById('rankLabel').textContent = rank.label;
+  document.getElementById('rankCount').textContent = s.created;
+  // unlock funny mode
+  const funnyBtn = document.getElementById('mode-funny');
+  if(s.created >= 3){
+    funnyBtn.classList.remove('mode-locked');
+    funnyBtn.querySelector('span:last-child').textContent = 'СМІШНЕ';
+    funnyBtn.removeAttribute('title');
+  }
+}
+
+function checkRankUp(prevCreated, newCreated){
+  const prevRank = getCurrentRank(prevCreated);
+  const newRank  = getCurrentRank(newCreated);
+  if(newRank.label !== prevRank.label){
+    showUnlock(`${newRank.icon} РАНГ: ${newRank.label}`);
+    if(newRank.unlocks.includes('funny')){
+      setTimeout(()=>showUnlock('😂 РЕЖИМ "СМІШНЕ" РОЗБЛОКОВАНО — ти заслужив'), 2400);
+    }
+  }
+}
+
+function showUnlock(msg){
+  const el = document.getElementById('unlockNotif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// ACHIEVEMENTS
+// ══════════════════════════════════════════════
+const ACHIEVEMENTS = {
+  1:  { text:'🏆 Нічого не зрозумів, але продовжив',   sub:'ПЕРШЕ ДОСЯГНЕННЯ' },
+  2:  { text:'🏆 Зробив це вдруге (чому?)',             sub:'ПІДОЗРІЛА АКТИВНІСТЬ' },
+  3:  { text:'🏆 Трохи пожалкував',                    sub:'МОМЕНТ ПРОСВІТЛЕННЯ' },
+  6:  { text:'🏆 Натиснув кнопку без причини',          sub:'ЦЕ НОРМАЛЬНО' },
+  11: { text:'🏆 Це вже серйозно',                     sub:'АБО НІ' },
+  21: { text:'🏆 21 сигнал. Навіщо.',                  sub:'МИ ТЕЖ НЕ ЗНАЄМО' },
+};
+
+function showAchievement(count){
+  const a = ACHIEVEMENTS[count];
+  if(!a) return;
+  const el = document.getElementById('achieveNotif');
+  document.getElementById('achieveText').textContent = a.text;
+  document.getElementById('achieveSub').textContent = a.sub;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 4000);
+}
+
+window.showShareAchievement = function(){
+  const s = getStats();
+  if(s.created >= 2){
+    const el = document.getElementById('achieveNotif');
+    document.getElementById('achieveText').textContent = '🏆 Відправив комусь, хто не чекав';
+    document.getElementById('achieveSub').textContent = 'СМІЛИВО';
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 4000);
+  }
+};
+
+// ══════════════════════════════════════════════
+// SARCASTIC FEEDBACK
+// ══════════════════════════════════════════════
+const SARCASTIC_GENERATE = [
+  'і хтось це відкриє… співчуваємо.',
+  'ти реально це відправиш? сміливо.',
+  'система зафіксувала. просто так.',
+  'тепер живи з цим.',
+  'ти впевнений? окей.',
+];
+const SARCASTIC_READ = [
+  'ну що, стало легше? ні? окей.',
+  'тепер живи з цим.',
+  'ми попереджали. але ти все одно натиснув.',
+  'цікавий вибір.',
+];
+
+function sarcasticAfterGenerate(count){
+  const specific = {
+    3: 'ти вже відправив 3 сигнали… це підозріло.',
+    5: 'ми починаємо тебе запам\'ятовувати.',
+    10: 'о, ти знову тут. неочікувано.',
+  };
+  const msg = specific[count] || SARCASTIC_GENERATE[Math.floor(Math.random()*SARCASTIC_GENERATE.length)];
+  setTimeout(()=>showToast('😏 ' + msg), 1800);
+}
+
+function sarcasticAfterRead(){
+  const msg = SARCASTIC_READ[Math.floor(Math.random()*SARCASTIC_READ.length)];
+  setTimeout(()=>showToast('🙂 ' + msg), 2500);
+}
+
+// ══════════════════════════════════════════════
+// SYSTEM TROLL
+// ══════════════════════════════════════════════
+const TROLL_MSGS = [
+  'ми бачимо, що ти тут завис.',
+  'ти читаєш це занадто серйозно.',
+  'це був просто текст. чи ні?',
+  'це просто сайт. ми теж не знаємо, чому ти тут.',
+  'це мало сенс 2 рівні тому.',
+];
+let trollTimer = null;
+function startTrollSystem(){
+  if(trollTimer) return;
+  trollTimer = setInterval(()=>{
+    if(Math.random() > 0.75){
+      const el = document.getElementById('trollNotif');
+      el.textContent = TROLL_MSGS[Math.floor(Math.random()*TROLL_MSGS.length)];
+      el.classList.add('show');
+      setTimeout(()=>el.classList.remove('show'), 4000);
+    }
+  }, 25000);
+}
+
+// ══════════════════════════════════════════════
+// DYNAMIC BUTTON TEXT
+// ══════════════════════════════════════════════
+function updateCreateAnotherBtn(){
+  const s = getStats();
+  const btn = document.getElementById('btn-create-another');
+  if(!btn) return;
+  if(s.created >= 11)      btn.textContent = 'серйозно?';
+  else if(s.created >= 6)  btn.textContent = 'ти впевнений?';
+  else if(s.created >= 3)  btn.textContent = 'ну давай ще раз';
+  else                     btn.textContent = '✚ СТВОРИТИ ЩЕ ОДИН';
+}
+
+// ══════════════════════════════════════════════
+// RATE LIMITING (5 сигналів / хв)
+// ══════════════════════════════════════════════
+function checkRateLimit(){
+  const now = Date.now();
+  const key = 'sc_rl';
+  let rl = JSON.parse(localStorage.getItem(key)||'[]');
+  rl = rl.filter(t => now-t < 60000);
+  if(rl.length >= 5) return false;
+  rl.push(now);
+  localStorage.setItem(key, JSON.stringify(rl));
+  return true;
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const arr = new Uint8Array(8);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => chars[b % chars.length]).join('');
+}
+
+function fillMsg(n, mode){
+  const p = pools[mode] || pools.mystika;
+  return p[Math.floor(Math.random()*p.length)].replace(/{name}/g, n);
+}
+
+function pause(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type ? `${type}-toast` : '';
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.opacity='0'; t.className=''; }, 3000);
+}
+window.showToast = showToast;
+
+// ══════════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════════
+function setProgress(step){
+  // step: 1, 2, or 3
+  ['prog-1','prog-2','prog-3'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'progress-step';
+    if(i+1 < step) el.classList.add('done');
+    if(i+1 === step) el.classList.add('active');
+  });
+  ['prog-line-1','prog-line-2'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'progress-line';
+    if(i+1 < step) el.classList.add('done');
+  });
+}
+
+// ══════════════════════════════════════════════
+// STEP MANAGEMENT
+// ══════════════════════════════════════════════
+const STEPS = ['step-home','step-decrypt','step-read','step-create','step-share'];
+window.switchStep = function(id){
+  STEPS.forEach(s=>{ const el=document.getElementById(s); if(el) el.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+window.goHome = function(){
+  switchStep('step-home');
+  document.getElementById('codeInput').value='';
+  document.getElementById('targetName').value='';
+  document.getElementById('readMsgText').innerHTML='';
+  document.getElementById('readActions').style.display='none';
+  setProgress(1);
+};
+
+window.goCreate = function(){
+  switchStep('step-create');
+  document.getElementById('targetName').focus();
+  setProgress(2);
+  updateRankUI();
+};
+
+// ══════════════════════════════════════════════
+// MODE SELECTOR
+// ══════════════════════════════════════════════
+let currentMode = 'mystika';
+window.setMode = function(mode){
+  const s = getStats();
+  if(mode === 'funny' && s.created < 3){ showToast('🔒 РОЗБЛОКОВУЄТЬСЯ ПІСЛЯ 3 СИГНАЛІВ', 'error'); return; }
+  currentMode = mode;
+  ['mystika','drama','funny'].forEach(m=>{
+    const btn = document.getElementById('mode-'+m);
+    btn.className = 'mode-btn' + (s.created < 3 && m==='funny' ? ' mode-locked' : '');
+  });
+  document.getElementById('mode-'+mode).classList.add('selected-'+mode);
+};
+
+// ══════════════════════════════════════════════
+// DECRYPT ANIMATION
+// ══════════════════════════════════════════════
+const GLITCH_CHARS = '▓█▒░▪▫■□▸▹►▻◆◇○●◉⬛⬜⚡#@%&$!?';
+async function runDecryptAnimation(duration=2200){
+  const chars = document.getElementById('decryptChars');
+  const fill  = document.getElementById('decryptFill');
+  const status= document.getElementById('decryptStatus');
+  const labels= ['АНАЛІЗ СИГНАЛУ...','ЗЛАМУЄМО ШИФР...','ДЕШИФРУВАННЯ...','ГОТОВО'];
+  const start = Date.now();
+  fill.style.width='0%';
+
+  while(Date.now()-start < duration){
+    const prog = (Date.now()-start)/duration;
+    fill.style.width = (prog*100)+'%';
+    chars.textContent = Array.from({length:8},()=>
+      GLITCH_CHARS[Math.floor(Math.random()*GLITCH_CHARS.length)]).join('');
+    const li = Math.min(Math.floor(prog*4), 3);
+    status.textContent = labels[li];
+    await pause(80);
+  }
+  fill.style.width='100%';
+  chars.textContent='▶▶▶▶▶▶▶▶';
+  status.textContent='РОЗШИФРОВАНО';
+  await pause(300);
+}
+
+// ══════════════════════════════════════════════
+// TYPEWRITE
+// ══════════════════════════════════════════════
+async function typewrite(id, text){
+  const el = document.getElementById(id);
+  const cur = '<span style="display:inline-block;width:2px;height:1em;background:var(--text);vertical-align:text-bottom;animation:blink .8s step-end infinite"></span>';
+  el.innerHTML = cur;
+  for(let i=0;i<text.length;i++){
+    el.innerHTML = text.substring(0,i+1) + cur;
+    await pause(30+Math.random()*20);
+  }
+  el.innerHTML = text;
+}
+
+// ══════════════════════════════════════════════
+// READ SIGNAL
+// ══════════════════════════════════════════════
+window.readSignal = async function(){
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+
+  if(!code){
+    showToast('⚠️ ВВЕДИ КОД ДОСТУПУ', 'error');
+    const inp = document.getElementById('codeInput');
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'), 500);
+    inp.focus();
+    return;
+  }
+  if(code.length < 6){
+    showToast('⚠️ КОД ЗАНАДТО КОРОТКИЙ', 'error');
+    document.getElementById('codeInput').classList.add('error');
+    setTimeout(()=>document.getElementById('codeInput').classList.remove('error'), 500);
+    return;
+  }
+
+  const btn = document.getElementById('btn-read');
+  btn.innerHTML = 'ПЕРЕВІРКА...';
+  btn.disabled = true;
+
+  // Analytics
+  if(window.gtag) gtag('event','open_signal',{code_length:code.length});
+
+  try {
+    const snap = await getDoc(doc(db,'codes',code));
+    if(!snap.exists()){
+      showToast('❌ КОД НЕ ЗНАЙДЕНО АБО НЕПРАВИЛЬНИЙ', 'error');
+      if(window.gtag) gtag('event','error_invalid_code',{code});
+      btn.innerHTML = '▶ РОЗШИФРУВАТИ СИГНАЛ';
+      btn.disabled = false;
+      document.getElementById('codeInput').classList.add('error');
+      setTimeout(()=>document.getElementById('codeInput').classList.remove('error'), 500);
+      return;
+    }
+
+    const data = snap.data();
+    if(!data.used){
+      await updateDoc(doc(db,'codes',code),{used:true,openedAt:Date.now()});
+    }
+
+    // Update stats
+    const s = getStats(); s.opened++; saveStats(s);
+    sarcasticAfterRead();
+
+    // Decrypt animation
+    setProgress(2);
+    switchStep('step-decrypt');
+    await runDecryptAnimation(2200);
+
+    // Show message
+    switchStep('step-read');
+    document.getElementById('readActions').style.display='none';
+    await typewrite('readMsgText', data.message);
+    document.getElementById('readActions').style.display='block';
+    setProgress(3);
+
+  } catch(e){
+    showToast('🔴 ПОМИЛКА З\'ЄДНАННЯ — СПРОБУЙ ЩЕ РАЗ', 'error');
+    console.error(e);
+  }
+
+  btn.innerHTML = '▶ РОЗШИФРУВАТИ СИГНАЛ';
+  btn.disabled = false;
+};
+
+// ══════════════════════════════════════════════
+// GENERATE SIGNAL
+// ══════════════════════════════════════════════
+let newCode = '';
+let generatedMessage = '';
+
+window.generateSignal = async function(){
+  const name = document.getElementById('targetName').value.trim();
+
+  if(!name){
+    showToast('⚠️ ВВЕДИ ІМ\'Я', 'error');
+    const inp = document.getElementById('targetName');
+    inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'), 500);
+    inp.focus();
+    return;
+  }
+  if(name.length < 2){
+    showToast('⚠️ ІМ\'Я ЗАНАДТО КОРОТКЕ', 'error');
+    return;
+  }
+
+  if(!checkRateLimit()){
+    showToast('⏳ ЗАБАГАТО СИГНАЛІВ — ЗАЧЕКАЙ ХВИЛИНУ', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-generate');
+  btn.innerHTML = 'ГЕНЕРАЦІЯ...';
+  btn.disabled = true;
+
+  generatedMessage = fillMsg(name, currentMode);
+  newCode = genCode();
+
+  if(window.gtag) gtag('event','generate_signal',{mode:currentMode,name_length:name.length});
+
+  try {
+    await setDoc(doc(db,'codes',newCode),{
+      message: generatedMessage,
+      mode: currentMode,
+      used: false,
+      created: Date.now()
+    });
+
+    // Update game stats
+    const s = getStats();
+    const prev = s.created;
+    s.created++;
+    saveStats(s);
+    checkRankUp(prev, s.created);
+    showAchievement(s.created);
+    sarcasticAfterGenerate(s.created);
+
+    // Go to share
+    document.getElementById('previewMsgText').textContent = generatedMessage;
+    document.getElementById('newCodeDisplay').textContent = newCode;
+    document.getElementById('targetName').value = '';
+    switchStep('step-share');
+    setProgress(3);
+    updateRankUI();
+    updateCreateAnotherBtn();
+    startTrollSystem();
+
+  } catch(e){
+    showToast('🔴 ПОМИЛКА. СПРОБУЙ ЩЕ РАЗ.', 'error');
+    console.error(e);
+  }
+
+  btn.innerHTML = '▶ ЗГЕНЕРУВАТИ СИГНАЛ';
+  btn.disabled = false;
+};
+
+// ══════════════════════════════════════════════
+// SHARE
+// ══════════════════════════════════════════════
+function getShareTexts(){
+  const base = window.location.origin + window.location.pathname;
+  const url  = base + '?code=' + newCode;
+  const teaser = 'Я дізнався про тебе дещо дуже дивне. Прочитай, поки я це не видалив. Без цього коду ти не відкриєш.';
+  const full = `${teaser}\n\nСАЙТ: ${url}\nТВІЙ КОД: ${newCode}`;
+  return { url, teaser, full };
+}
+
+window.doShare = async function(platform){
+  const {url, teaser, full} = getShareTexts();
+  if(window.gtag) gtag('event','share_signal',{platform, success:true});
+  window.showShareAchievement();
+
+  if(platform==='telegram'){
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(teaser+'\n\nКОД: '+newCode)}`,'_blank');
+  } else if(platform==='whatsapp'){
+    window.open(`https://wa.me/?text=${encodeURIComponent(full)}`,'_blank');
+  } else if(platform==='instagram'){
+    try{ await navigator.clipboard.writeText(full); }catch(e){}
+    showToast('📸 Скопійовано — встав у Direct або Stories', 'success');
+  }
+};
+
+window.copyCode = function(){
+  if(window.gtag) gtag('event','copy_code');
+  const {url} = getShareTexts();
+  const text = `Твій код: ${newCode}\nСайт: ${url}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyCodeBtn');
+    btn.textContent='✓ СКОПІЙОВАНО'; btn.classList.add('copied');
+    showToast('✓ Код скопійовано!', 'success');
+    setTimeout(()=>{ btn.textContent='КОПІЮВАТИ'; btn.classList.remove('copied'); }, 2200);
+  }).catch(()=>showToast('Код: '+newCode));
+};
+
+window.copyFullMessage = function(){
+  if(window.gtag) gtag('event','copy_code',{type:'full_message'});
+  const {full} = getShareTexts();
+  navigator.clipboard.writeText(full).then(()=>{
+    showToast('📋 Повний текст скопійовано!', 'success');
+  }).catch(()=>showToast('Помилка копіювання'));
+};
+
+// ══════════════════════════════════════════════
+// COUNTERS (fake live)
+// ══════════════════════════════════════════════
+let c1=48291, c2=12044;
+setInterval(()=>{
+  if(Math.random()>.55){ c1+=Math.floor(Math.random()*3)+1; document.getElementById('counter1').textContent=c1.toLocaleString('en-US'); }
+  if(Math.random()>.65){ c2+=Math.floor(Math.random()*2)+1; document.getElementById('counter2').textContent=c2.toLocaleString('en-US'); }
+},3200);
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  // Particles
+  const pw=document.getElementById('particles');
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div'); el.className='particle';
+    el.style.cssText=`left:${Math.random()*100}%;--dur:${5+Math.random()*8}s;--delay:${Math.random()*6}s;--dx:${(Math.random()-.5)*60}px`;
+    pw.appendChild(el);
+  }
+
+  // Check URL code
+  const p = new URLSearchParams(window.location.search);
+  const c = p.get('code');
+  if(c){
+    document.getElementById('codeInput').value = c.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    window.readSignal();
+  }
+
+  // Init
+  setProgress(1);
+  updateRankUI();
+  updateCreateAnotherBtn();
+  setMode('mystika');
+  // Start troll system after 60s if user hangs around
+  setTimeout(startTrollSystem, 60000);
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    if(document.getElementById('step-home').classList.contains('active')
+       && document.activeElement.id==='codeInput') window.readSignal();
+    if(document.getElementById('step-create').classList.contains('active')
+       && document.activeElement.id==='targetName') window.generateSignal();
+  }
+});
+</script>
+</body>
+</html>
